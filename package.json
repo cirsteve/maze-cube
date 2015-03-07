@@ -6,7 +6,7 @@
   "main": "maze.js",
   "repository":{
     "type": "git",
-    "url": "git@github.com:cirsteve/maze-cube.git",
+    "url": "git@github.com:cirsteve/maze-cube.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

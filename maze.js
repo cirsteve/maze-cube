@@ -15,7 +15,7 @@ var CubedMaze = function (options) {
     this.y= this.options.y;
     this.x= this.options.x;
     this.z= this.options.z;
-    this.nodeSize = options.nodeSize || 40;
+    this.nodeSize = this.options.nodeSize || 40;
     this.created = new Date();
     this.sets= [];
 

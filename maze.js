@@ -115,7 +115,7 @@ CubedMaze.prototype.applyKruskal= function () {
         length = this.walls.length,
         i,t, w;
 
-    flatWalls = _.flatten(this.walls);
+    flatWalls = flatten(this.walls);
     do  {
         randWallIndex = Math.floor(
                             Math.random()*flatWalls.length);

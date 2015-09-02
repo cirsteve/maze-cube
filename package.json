@@ -1,6 +1,6 @@
 {
   "name": "maze-cube",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Library to create a multidimensional maze",
   "homepage": "https://github.com/cirsteve/maze-cube",
   "main": "maze.js",
@@ -12,5 +12,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Steven Ciraolo <steven.ciraolo@gmail.com> (https://github.com/cirsteve)",
-  "license": "BSD-2-Clause"
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "lodash": "^3.10.1"
+  }
 }

@@ -1,3 +1,4 @@
+var _ = require('lodash');
 
 var CubedMaze = function (options) {
     this.options=options || {x:4,y:5,z:3};

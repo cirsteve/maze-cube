@@ -1,7 +1,5 @@
-var _ = require('lodash');
-
 var CubedMaze = function (options) {
-    this.options=options || {x:4,y:5,z:3};
+    this.options= options || {x:4,y:5,z:3};
     this.y= this.options.y;
     this.x= this.options.x;
     this.z= this.options.z;
@@ -12,6 +10,18 @@ var CubedMaze = function (options) {
     this.createMaze();
 
     return this;
+};
+
+var flatten = function flatten(arr) {
+    return arr.reduce(function (flat, toFlatten) {
+        // See if this index is an array that itself needs to be flattened.
+        if (toFlatten.some(Array.isArray)) {
+            return flat.concat(flatten(toFlatten));
+            // Otherwise just add the current index to the end of the flattened array.
+        } else {
+            return flat.concat(toFlatten);
+        }
+    });
 };
 
 CubedMaze.prototype.initNodes= function () {
@@ -105,7 +115,7 @@ CubedMaze.prototype.applyKruskal= function () {
         length = this.walls.length,
         i,t, w;
 
-    flatWalls = _.flatten(this.walls);
+    flatWalls = flatten(this.walls);
     do  {
         randWallIndex = Math.floor(
                             Math.random()*flatWalls.length);

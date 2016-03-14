@@ -1,4 +1,4 @@
-var flatten = function flatten(arr) {
+let flatten = function flatten(arr) {
     return arr.reduce(function (flat, toFlatten) {
         // See if this index is an array that itself needs to be flattened.
         if (toFlatten.some(Array.isArray)) {
@@ -10,12 +10,11 @@ var flatten = function flatten(arr) {
     }, []);
 };
 
-var CubedMaze = function (options) {
+let CubedMaze = function (options) {
     this.options= options || {x:4,y:5,z:3};
     this.y= this.options.y;
     this.x= this.options.x;
     this.z= this.options.z;
-    this.nodeSize = this.options.nodeSize || 40;
     this.created = new Date();
     this.sets= [];
 
@@ -26,10 +25,9 @@ var CubedMaze = function (options) {
 
 CubedMaze.prototype.initNodes= function () {
 //create nodes with the formation [x,y,z]
-    var y = 0,
-        x = 0,
-        z = 0,
-        nodes = [];
+    let z = 0;
+    let nodes = [];
+    let x,y;
     for (z;z < this.z;z++) {
         nodes.push([]);
         x = 0;
@@ -52,12 +50,9 @@ CubedMaze.prototype.initNodes= function () {
 CubedMaze.prototype.initWalls= function () {
 //create walls with the following per level format
 //[[x],[y],[z]]
-    var y = 0,
-        x = 0,
-        z = 0,
-        walls = [],
-        zArray = [[],[],[]],
-        xWalls, yWalls, zWalls;
+    let z = 0;
+    let walls = [],
+    let zArray, xWalls, yWalls, zWalls;
     for (z;z < this.z;z++) {
         x = 0;
         y = 0;
@@ -107,15 +102,14 @@ CubedMaze.prototype.initWalls= function () {
 };
 
 CubedMaze.prototype.applyKruskal= function () {
-    var rWall = null,
-        randWallIndex = null,
-        checkedWalls = [],
-        flatWalls = [],
-        nodeCount = this.y * this.x * this.z,
-        length = this.walls.length,
-        i,t, w;
+    let rWall = null;
+    let randWallIndex = null;
+    let checkedWalls = [];
+    let flatWalls = [];
+    let nodeCount = this.y * this.x * this.z;
+    let length = this.walls.length;
+    let i,t, w;
 
-    console.log('walls is: ', this.walls, this);
     flatWalls = flatten(this.walls);
     do  {
         randWallIndex = Math.floor(
@@ -137,13 +131,13 @@ CubedMaze.prototype.createMaze = function () {
 };
 
 CubedMaze.prototype.evaluateMove = function (start, end) {
-    var wall = {exists:true};
-    var startX = start[0];
-    var startY = start[1];
-    var startZ = start[2];
-    var endX = end[0];
-    var endY = end[1];
-    var endZ = end[2];
+    let wall = {exists:true};
+    let startX = start[0];
+    let startY = start[1];
+    let startZ = start[2];
+    let endX = end[0];
+    let endY = end[1];
+    let endZ = end[2];
     //its a lateral move so check an x axis wall
     if (startX !== endX) {
         //if the end node is -1 or one less then the totoal
@@ -205,12 +199,12 @@ CubedMaze.prototype.getAdjacentNodes= function (wall) {
 };
 
 CubedMaze.prototype.getNodeSet= function (node) {
-    var i = 0,
-        t = 0,
-        setsLength = this.sets.length,
-        setLength = null,
-        testSet = null,
-        testNode = null;
+    let i = 0;
+    let t = 0;
+    let setsLength = this.sets.length;
+    let setLength = null;
+    let testSet = null;
+    let testNode = null;
 
     for (i;i<setsLength;i++) {
         testSet = this.sets[i];
@@ -231,9 +225,9 @@ CubedMaze.prototype.getNodeSet= function (node) {
 CubedMaze.prototype.setWall = function (wall) {
     //set the wall to exists based on its
     //adjacent nodes
-    var nodes = this.getAdjacentNodes(wall);
+    let nodes = this.getAdjacentNodes(wall);
 
-    var set0 = this.getNodeSet(nodes[0]),
+    let set0 = this.getNodeSet(nodes[0]),
         set1 = this.getNodeSet(nodes[1]);
 
     if (set0 === set1 && set0 === null ) {
@@ -256,4 +250,12 @@ CubedMaze.prototype.setWall = function (wall) {
     return wall;
 };
 
-module.exports = CubedMaze;
+CubedMaze.prototype.getWallsAsStrings = function () {
+    //return a more efficient string based represenation of the maze walls instead of the object represenation
+    //of the form [x, y, z] for each level, a '0' char indicates no wall and '1' indicatina a wall
+    //eg['010', '101', '110']
+    return this.walls.map(level=>level.map(dim=>dim.map(wall=>wall.exists ? '1' : '0').join('')))
+    })
+};
+
+export default CubedMaze;

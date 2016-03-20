@@ -1,14 +1,4 @@
-var flatten = function flatten(arr) {
-    return arr.reduce(function (flat, toFlatten) {
-        // See if this index is an array that itself needs to be flattened.
-        if (toFlatten.some(Array.isArray)) {
-            return flat.concat(flatten(toFlatten));
-            // Otherwise just add the current index to the end of the flattened array.
-        } else {
-            return flat.concat(toFlatten);
-        }
-    }, []);
-};
+var _ = require('lodash');
 
 var CubedMaze = function (options) {
     this.options= options || {x:4,y:5,z:3};
@@ -110,7 +100,7 @@ CubedMaze.prototype.applyKruskal= function () {
     var length = this.walls.length;
     var i,t, w;
 
-    flatWalls = flatten(this.walls);
+    flatWalls = _.flattenDeep(this.walls);
     do  {
         randWallIndex = Math.floor(
                             Math.random()*flatWalls.length);
@@ -130,51 +120,6 @@ CubedMaze.prototype.createMaze = function () {
     return this;
 };
 
-/**
-CubedMaze.prototype.evaluateMove = function (start, end) {
-    //takes a start node and end node of the form [x: int, y: int, z: int]
-    //returns true if no wall or boundary separates the two nodes and the move is permitted else return false
-    var wall = false;
-    var startX = start[0];
-    var startY = start[1];
-    var startZ = start[2];
-    var endX = end[0];
-    var endY = end[1];
-    var endZ = end[2];
-    //its a lateral move so check an x axis wall
-    if (startX !== endX) {
-        //if the end node is -1 or one less then the total
-        //x nodes return false because its a border
-        if (endX === -1 || endX === this.x) {
-            return wall;
-        }
-        if (startX < endX) {
-            wall = this.walls[startZ][0][startX].split('')[startY];
-        } else {
-            wall = this.walls[startZ][0][endX].split('')[startY];
-        }
-    } else if (startY !== endY) {
-        if (endY === -1 || endY === this.y) {
-            return wall;
-        }
-        if (startY < endY) {
-            wall = this.walls[startZ][1][startX].split('')[startY];
-        } else {
-            wall = this.walls[startZ][1][startX].split('')[endY];
-        }
-    } else {
-        if (endZ === -1 || endZ === this.z) {
-            return wall;
-        }
-        if (startZ < endZ) {
-            wall = this.walls[startZ][2][startX].split('')[startY];
-        } else {
-            wall = this.walls[endZ][2][startX].split('')[startY];
-        }
-    }
-    return wall === '0';
-};
-**/
 CubedMaze.prototype.getAdjacentNodes= function (wall) {
     if (wall.dim === 'z') {
         //wall.dim:0 denotes a z dimension wall
@@ -326,25 +271,24 @@ function evaluateMove (walls, current, proposed) {
     //returns true if no wall or boundary separates the two nodes and the move is permitted else return false
     var moveMap = {
         //check current position x wall
-        0:()=>walls[current[2]][0][current[0]][current[1]],
+        '322':()=>walls[current[2]][0][current[0]][current[1]],
         //check current position y wall
-        90:()=>walls[current[2]][1][current[0]][current[1]],
+        '232':()=>walls[current[2]][1][current[0]][current[1]],
         //check current position z wall
-        99:()=>walls[current[2]][2][current[0]][current[1]],
+        '223':()=>walls[current[2]][2][current[0]][current[1]],
         //check position east x wall
-        200:()=>walls[current[2]][0][current[0]-1] && walls[current[2]][0][current[0]-1][current[1]],
+        '122':()=>walls[current[2]][0][current[0]-1] && walls[current[2]][0][current[0]-1][current[1]],
         //check position south y wall
-        110:()=>walls[current[2]][1][current[0]] && walls[current[2]][1][current[0]][current[1]-1],
+        '212':()=>walls[current[2]][1][current[0]] && walls[current[2]][1][current[0]][current[1]-1],
         //check position level up z wall
-        101:()=>walls[current[2]-1] && walls[current[2]-1][2][current[0]][current[1]]
-
+        '221':()=>walls[current[2]-1] && walls[current[2]-1][2][current[0]][current[1]]
     }
 
     proposed = pad(proposed).filter(d=>d>=0);
     if (proposed.length !== 3 || outOfBound(walls, proposed)) {
         return false
     }
-    var delta = parseInt(current.join(''), 10) - parseInt(proposed.join(''), 10) + 100;
+    var delta = _.map(_.zip(current, proposed), p=>p[1]-p[0]+2).join('');;
     return moveMap[delta]() === '0';
 }
 
@@ -392,6 +336,7 @@ function getPath (walls, start, goal) {
             validMove = freshNode(walls, ultimate,prevNode, record);
             //if there are no valid moves from a node it is a dead end
             //remove it from the path
+            console.log('fresh move: ', validMove);
             if (validMove === false) {
                 var de = path.shift();
             } else {
@@ -408,6 +353,7 @@ function getPath (walls, start, goal) {
             //iterate through neighbors until valid move is discovered
         } while(nextNode && !evaluateMove(walls, ultimate, nextNode)|| sameNode === 0 )
             //if node exists add it to path
+            console.log('next move: ', nextNode);
             if (nextNode) {
                 path.unshift(nextNode);
 

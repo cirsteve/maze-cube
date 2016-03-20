@@ -13,5 +13,7 @@
   },
   "author": "Steven Ciraolo <steven.ciraolo@gmail.com> (https://github.com/cirsteve)",
   "license": "BSD-2-Clause",
-  "dependencies": {}
+  "dependencies": {
+    "lodash": "^4.6.1"
+  }
 }

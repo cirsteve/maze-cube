@@ -336,7 +336,6 @@ function getPath (walls, start, goal) {
             validMove = freshNode(walls, ultimate,prevNode, record);
             //if there are no valid moves from a node it is a dead end
             //remove it from the path
-            console.log('fresh move: ', validMove);
             if (validMove === false) {
                 var de = path.shift();
             } else {
@@ -353,7 +352,6 @@ function getPath (walls, start, goal) {
             //iterate through neighbors until valid move is discovered
         } while(nextNode && !evaluateMove(walls, ultimate, nextNode)|| sameNode === 0 )
             //if node exists add it to path
-            console.log('next move: ', nextNode);
             if (nextNode) {
                 path.unshift(nextNode);
 
@@ -370,5 +368,4 @@ module.exports = {
     Maze:CubedMaze,
     evaluate: evaluateMove,
     path: getPath,
-    padPosition: pad
-};
+    padPosition: pad};

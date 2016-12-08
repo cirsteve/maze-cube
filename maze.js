@@ -266,30 +266,64 @@ function pad(a) {
     return a;
 }
 
+var BOUNDARY_MAP = {
+    //check current position x wall
+    '322':'west',
+    //check current position y wall
+    '232':'north',
+    //check current position z wall
+    '223':'down',
+    //check position east x wall
+    '122':'east',
+    //check position south y wall
+    '212':'south',
+    //check position level up z wall
+    '221':'up'
+}
+
+var prepProposed = function (proposed) {
+    return pad(proposed).filter(d=>d>=0);
+};
+
+var testProposed = function (proposed) {
+    if (proposed.length !== 3 || outOfBound(walls, proposed)) {
+        return false;
+    }
+    return true;
+}
+
+var getDelta = function(current, proposed) {
+    return _.map(_.zip(current, proposed), p=>p[1]-p[0]+2).join('');
+};
+
+var getBoundary = function(current, proposed) {
+    return BOUNDARY_MAP[getDelta(current, proposed)];
+};
+
 function evaluateMove (walls, current, proposed) {
-    //takes an an array of wall arrays [[level][column][row]] and start node and end node of the form [x: int, y: int, z: int]
+    //takes an an array of wall arrays [[level][column][row]] and start node and end node of the form [x, y, z]
     //returns true if no wall or boundary separates the two nodes and the move is permitted else return false
     var moveMap = {
         //check current position x wall
-        '322':()=>walls[current[2]][0][current[0]][current[1]],
+        'west':()=>walls[current[2]][0][current[0]][current[1]],
         //check current position y wall
-        '232':()=>walls[current[2]][1][current[0]][current[1]],
+        'north':()=>walls[current[2]][1][current[0]][current[1]],
         //check current position z wall
-        '223':()=>walls[current[2]][2][current[0]][current[1]],
+        'down':()=>walls[current[2]][2][current[0]][current[1]],
         //check position east x wall
-        '122':()=>walls[current[2]][0][current[0]-1] && walls[current[2]][0][current[0]-1][current[1]],
+        'east':()=>walls[current[2]][0][current[0]-1] && walls[current[2]][0][current[0]-1][current[1]],
         //check position south y wall
-        '212':()=>walls[current[2]][1][current[0]] && walls[current[2]][1][current[0]][current[1]-1],
+        'south':()=>walls[current[2]][1][current[0]] && walls[current[2]][1][current[0]][current[1]-1],
         //check position level up z wall
-        '221':()=>walls[current[2]-1] && walls[current[2]-1][2][current[0]][current[1]]
+        'up':()=>walls[current[2]-1] && walls[current[2]-1][2][current[0]][current[1]]
     }
 
-    proposed = pad(proposed).filter(d=>d>=0);
-    if (proposed.length !== 3 || outOfBound(walls, proposed)) {
+    proposed = prepProposed(proposed);
+    if (!testProposed(proposed)) {
         return false
     }
-    var delta = _.map(_.zip(current, proposed), p=>p[1]-p[0]+2).join('');;
-    return moveMap[delta]() === '0';
+    var delta = getDelta(current, proposed);
+    return moveMap[BOUNDARY_MAP[delta]]() === '0';
 }
 
 var freshNode = function (walls, node, prevNode, record) {
@@ -368,4 +402,5 @@ module.exports = {
     Maze:CubedMaze,
     evaluate: evaluateMove,
     path: getPath,
+    getBoundary: getBoundary,
     padPosition: pad};

@@ -285,7 +285,7 @@ var prepProposed = function (proposed) {
     return pad(proposed).filter(d=>d>=0);
 };
 
-var testProposed = function (proposed) {
+var testProposed = function (walls, proposed) {
     if (proposed.length !== 3 || outOfBound(walls, proposed)) {
         return false;
     }
@@ -319,7 +319,7 @@ function evaluateMove (walls, current, proposed) {
     }
 
     proposed = prepProposed(proposed);
-    if (!testProposed(proposed)) {
+    if (!testProposed(walls, proposed)) {
         return false
     }
     var delta = getDelta(current, proposed);
